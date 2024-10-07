@@ -27,28 +27,27 @@ esac
 modelPath="${model}_1024_max_position/model.onnx"
 
 echo ""
-echo "$model" >> amd-$model.txt
-echo "SLen      BSize   Rate    Latency" >> nv-$model.txt
+echo "$model" >> nv-$model.txt
+echo "SLen      BSize   QPS    Latency" >> nv-$model.txt
 
 echo "$model"
-echo "SLen      BSize   Rate    Latency"
+echo "SLen      BSize   QPS    Latency"
 
 for seqLen in 256 512 1024
 	do
         for batchsize in 1 8 16 32 64 128
-                do
-
-                echo -n "Seq Length $seqLen Batchsize $batchsize"
-                echo -n "Seq Length $seqLen Batchsize $batchsize" >> nv-$model.txt
-
+        	do
                 trtexec --onnx=/dockerx/$modelPath --shapes=input_ids:${batchsize}x${seqLen},attention_mask:${batchsize}x${seqLen},token_type_ids:${batchsize}x${seqLen} --fp16 > temp.txt 2>&1
 
                 throughput=$(grep -oP 'Throughput: \K[0-9]+\.[0-9]+' temp.txt)
                 average=$(grep -oP 'mean = \K[0-9]+\.[0-9]+' temp.txt | head -n 1)
 
-                echo "  $average        $throughput"
-                echo "  $average        $throughput" >> nv-$model.txt
+		throughput=$(printf "%.2f" "$throughput")
+		average=$(printf "%.2f" "$average")
 
+		echo "$seqLen   $batchsize      $throughput     $average"
+		echo "$seqLen   $batchsize      $throughput     $average" >> nv-$model.txt
+                
                 rm temp.txt
         done
                 echo ""
