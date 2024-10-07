@@ -41,7 +41,7 @@ do
         for batchsize in 1 8 16 32 64 128
 
                 do
-                /opt/$rocmversion/bin/migraphx-driver perf /home/amd/dockerx/$modelPath --input-dim @input_ids $batchsize $seqLen @attention_mask $batchsize $seqLen @token_type_ids $batchsize $seqLen --fill1 input_ids attention_mask token_type_ids --batch $batchsize --fp16 > temp.txt 2>&1
+                /opt/$rocmversion/bin/migraphx-driver perf /dockerx/$modelPath --input-dim @input_ids $batchsize $seqLen @attention_mask $batchsize $seqLen @token_type_ids $batchsize $seqLen --fill1 input_ids attention_mask token_type_ids --batch $batchsize --fp16 > temp.txt 2>&1
 
                 file_content=$(<temp.txt)
                 throughput=$(echo "$file_content" | grep -oP '(?<=Rate: )\d+\.\d+(?= inferences/sec)')
