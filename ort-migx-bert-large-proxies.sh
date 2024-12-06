@@ -35,10 +35,10 @@ echo "SLen      BSize   Rate    Latency" >> amd-$model.txt
 echo "$model"
 echo "SLen      BSize   Rate    Latency"
 
-for seqLen in 256 512 1024
+for seqLen in 256 384 512 1024
 
         do
-        for batchsize in 1 8 16 32 64 128
+        for batchsize in 1 8 32 128 256 1024
 
                 do
                 python3 e2e_migraphx_bert_example.py --samples 1300 --no_eval --seq_len $seqLen --batch $batchsize --version 2.1 --model /dockerx/$modelPath --fp16 > temp.txt 2>&1
